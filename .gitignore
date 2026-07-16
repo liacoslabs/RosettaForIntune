@@ -1,0 +1,14 @@
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Build / deploy artifacts (regenerated from source — not tracked)
+dist/
+*.zip
+
+# Editor/OS cruft
+*.log
+Thumbs.db
+
+# Claude Code local config
+.claude/

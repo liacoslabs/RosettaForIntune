@@ -1,0 +1,28 @@
+/* Windows Version Overlay for Intune — badge styling.
+   Kept subtle so it blends into the Intune (Fluent UI) tables. */
+
+.wve-badge {
+  display: inline;
+  white-space: nowrap;
+}
+
+.wve-badge .wve-label {
+  font-weight: 600;
+  color: #0f6cbd;               /* Fluent brand blue */
+  cursor: help;
+}
+
+.wve-badge .wve-raw {
+  font-size: 0.85em;
+  color: #616161;
+  opacity: 0.85;
+}
+
+.wve-badge .wve-raw::before { content: "("; }
+.wve-badge .wve-raw::after  { content: ")"; }
+
+/* Dark mode (Intune honors prefers-color-scheme in some surfaces). */
+@media (prefers-color-scheme: dark) {
+  .wve-badge .wve-label { color: #4db2ff; }
+  .wve-badge .wve-raw   { color: #adadad; }
+}

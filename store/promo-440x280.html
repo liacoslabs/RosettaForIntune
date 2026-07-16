@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Rosetta for Intune — promo tile</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { background:#070d17; }
+  /* Capture .tile at exactly 440x280 */
+  .tile {
+    width:440px; height:280px;
+    background: radial-gradient(600px 320px at 25% 0%, #123a5e 0%, #0b1524 60%, #070d17 100%);
+    font-family:"Segoe UI", system-ui, -apple-system, sans-serif; color:#fff;
+    display:flex; flex-direction:column; justify-content:center;
+    padding:34px 36px; position:relative; overflow:hidden;
+  }
+  .row { display:flex; align-items:center; gap:14px; margin-bottom:18px; }
+  .row img { width:44px; height:44px; }
+  .row h1 { font-size:25px; font-weight:700; letter-spacing:-.3px; }
+  .demo { font-family:"Cascadia Code", Consolas, monospace; font-size:15px; line-height:1.9; }
+  .demo .raw { color:#8b98a8; }
+  .demo .to  { color:#4db2ff; }
+  .demo .new { color:#4db2ff; font-weight:700; }
+  .kick { margin-top:16px; font-size:14px; color:#a9c7e8; }
+</style>
+</head>
+<body>
+  <div class="tile">
+    <div class="row">
+      <img src="../icons/icon128.png" alt="" />
+      <h1>Rosetta for Intune</h1>
+    </div>
+    <div class="demo">
+      <div><span class="raw">10.0.26200.8875</span>&nbsp;&nbsp;<span class="to">→</span>&nbsp;&nbsp;<span class="new">11-25H2-Jul2026</span></div>
+      <div><span class="raw">10.0.19045.6456</span>&nbsp;&nbsp;<span class="to">→</span>&nbsp;&nbsp;<span class="new">10-22H2</span></div>
+    </div>
+    <div class="kick">Windows build numbers, in plain English.</div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <header>
+    <h1>Rosetta for Intune</h1>
+    <p class="sub">Human-readable Windows builds in Intune</p>
+  </header>
+
+  <label class="row">
+    <input type="checkbox" id="enabled" />
+    <span>Enable overlay</span>
+  </label>
+
+  <label class="row">
+    <input type="checkbox" id="showOriginal" />
+    <span>Show original build number</span>
+  </label>
+
+  <label class="row">
+    <input type="checkbox" id="showPatch" />
+    <span>Show patch month (from revision)</span>
+  </label>
+
+  <div class="example">
+    <div class="ex-title">Example</div>
+    <div class="ex-raw">10.0.26200.8875</div>
+    <div class="ex-arrow">↓</div>
+    <div class="ex-friendly" id="preview">11-25H2-Jul2026</div>
+  </div>
+
+  <p class="note">Changes reload the active Intune tab.</p>
+
+  <script src="../src/versions.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

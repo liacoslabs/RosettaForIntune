@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Rosetta for Intune — screenshot</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { background: #1b1a19; }
+  /* Capture this .shot element at exactly 1280x800 */
+  .shot {
+    width: 1280px; height: 800px;
+    background: radial-gradient(1200px 600px at 20% 0%, #123a5e 0%, #0b1524 55%, #070d17 100%);
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    color: #fff; position: relative; overflow: hidden;
+    display: flex; flex-direction: column; padding: 56px 64px;
+  }
+  .brand { display: flex; align-items: center; gap: 16px; margin-bottom: 8px; }
+  .brand img { width: 52px; height: 52px; }
+  .brand h1 { font-size: 34px; font-weight: 700; letter-spacing: -0.5px; }
+  .tag { font-size: 20px; color: #a9c7e8; margin: 0 0 34px 68px; }
+
+  .stage { display: flex; gap: 32px; align-items: center; flex: 1; }
+
+  .panel {
+    background: #201f1e; border: 1px solid #3b3a39; border-radius: 10px;
+    box-shadow: 0 24px 60px rgba(0,0,0,.45);
+    width: 560px; overflow: hidden;
+  }
+  .panel .cap { font-size: 13px; letter-spacing: .08em; text-transform: uppercase;
+    color: #b0aeac; padding: 12px 18px; border-bottom: 1px solid #3b3a39; background:#2b2a29; }
+  table { width: 100%; border-collapse: collapse; font-size: 15px; }
+  th { text-align: left; color: #c8c6c4; font-weight: 600; font-size: 13px;
+    padding: 12px 18px; border-bottom: 1px solid #3b3a39; }
+  td { padding: 12px 18px; border-bottom: 1px solid #2c2b2a; color: #e6e6e6; }
+  tr:last-child td { border-bottom: none; }
+  .name { color:#9fd0ff; }
+  .mono { font-family: "Cascadia Code", Consolas, monospace; color:#b8b6b4; }
+  .badge { color:#4db2ff; font-weight:600; }
+
+  .arrow { font-size: 46px; color:#4db2ff; text-shadow:0 0 20px rgba(77,178,255,.5); }
+
+  .footnote { position:absolute; bottom:26px; left:64px; right:64px;
+    color:#8fa8c4; font-size:15px; text-align:center; }
+</style>
+</head>
+<body>
+  <div class="shot">
+    <div class="brand">
+      <img src="../icons/icon128.png" alt="" />
+      <h1>Rosetta for Intune</h1>
+    </div>
+    <p class="tag">Cryptic Windows build numbers, translated to plain English — right inside Intune.</p>
+
+    <div class="stage">
+      <!-- BEFORE -->
+      <div class="panel">
+        <div class="cap">Before — raw Intune</div>
+        <table>
+          <thead><tr><th>Device name</th><th>OS version</th></tr></thead>
+          <tbody>
+            <tr><td class="name">DESKTOP-4F2K9</td><td class="mono">10.0.26200.8875</td></tr>
+            <tr><td class="name">LT-SALES-08</td><td class="mono">10.0.26100.4652</td></tr>
+            <tr><td class="name">KIOSK-LOBBY</td><td class="mono">10.0.22631.4317</td></tr>
+            <tr><td class="name">WS-FINANCE-2</td><td class="mono">10.0.19045.6456</td></tr>
+            <tr><td class="name">SVR-APP-01</td><td class="mono">10.0.20348.2582</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="arrow">→</div>
+
+      <!-- AFTER -->
+      <div class="panel">
+        <div class="cap">After — Rosetta for Intune</div>
+        <table>
+          <thead><tr><th>Device name</th><th>OS version</th></tr></thead>
+          <tbody>
+            <tr><td class="name">DESKTOP-4F2K9</td><td class="badge">11-25H2-Jul2026</td></tr>
+            <tr><td class="name">LT-SALES-08</td><td class="badge">11-24H2-Jul2025</td></tr>
+            <tr><td class="name">KIOSK-LOBBY</td><td class="badge">11-23H2-Oct2024</td></tr>
+            <tr><td class="name">WS-FINANCE-2</td><td class="badge">10-22H2</td></tr>
+            <tr><td class="name">SVR-APP-01</td><td class="badge">Server-2022</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="footnote">Edition · feature update · patch month — at a glance. Hover any label for the full build details.</div>
+  </div>
+</body>
+</html>
