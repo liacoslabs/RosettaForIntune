@@ -10,6 +10,8 @@ patched — at a glance. The original build is available on hover (and optionall
 
 [**▶ Install from the Chrome Web Store**](https://chromewebstore.google.com/detail/rosetta-for-intune/idamhefkokoaljmclafeddaiidpeince)
 
+![Rosetta for Intune turns raw Intune OS version numbers into readable labels](store/screenshots/screenshot-1.png)
+
 ---
 
 ## What it does
@@ -33,6 +35,24 @@ Rosetta:
 
 Everything runs locally. There are no accounts, analytics, trackers, or network calls; the
 version database is bundled in the extension.
+
+## Screenshots
+
+**In context — right inside your device lists**
+
+![An Intune device list with the OS version column translated](store/screenshots/screenshot-2.png)
+
+**Configurable — a one-click toolbar popup**
+
+![The toolbar popup with overlay toggles](store/screenshots/screenshot-3.png)
+
+**Hover for the full build details**
+
+![A hover tooltip showing edition, GA date, patch month, and the raw build](store/screenshots/screenshot-4.png)
+
+**Broad coverage — Windows 11, 10, and Server**
+
+![Coverage across Windows 11, Windows 10, and Windows Server 2022](store/screenshots/screenshot-5.png)
 
 ## Install
 
