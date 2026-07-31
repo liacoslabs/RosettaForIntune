@@ -1,6 +1,6 @@
 # Privacy Policy — Rosetta for Intune
 
-_Last updated: 2026-07-15_
+_Last updated: 2026-07-31_
 
 Rosetta for Intune ("the extension") is designed to be privacy-preserving. This policy
 explains what the extension does and does not do with your information.
@@ -18,17 +18,22 @@ center and the Microsoft-owned origins that host its content (for example
 pages). On those pages it reads the visible Windows build-number text (e.g.
 `10.0.26200.8875`) and rewrites it into a human-readable label (e.g. `11-25H2-Jul2026`).
 
-The translation is performed entirely on your device using a version database that is
-bundled inside the extension. The extension makes **no network requests** and sends
-**no data** anywhere.
+The translation is performed entirely on your device.
+
+To keep the translations current, a background service worker periodically fetches
+Microsoft's public Windows **release-health** pages on `learn.microsoft.com`, parses the
+build/version tables, and caches them locally. These are ordinary anonymous requests for
+public web pages: **no personal or browsing data, credentials, or identifiers are sent**
+(requests are made without credentials), and nothing about you or your devices leaves your
+browser.
 
 ## What the extension stores
 
-The extension stores only your display preferences (whether the overlay is enabled,
-whether to show the original build number, and whether to show the patch month). These
-are saved using Chrome's `storage.sync` API so they follow your Chrome profile. This
-data never leaves Google's sync service for your own account and is not accessible to
-the developer.
+- **Preferences** — your display settings (overlay on/off, show original build, show patch
+  month), saved via Chrome's `storage.sync` API so they follow your browser profile. This
+  never leaves your own account and is not accessible to the developer.
+- **Cached build data** — the parsed Windows release-health database, saved via `storage.local`
+  so the overlay works quickly and offline between refreshes.
 
 ## What the extension does NOT do
 
@@ -36,12 +41,14 @@ the developer.
 - It does not track your browsing activity.
 - It does not read credentials, form inputs, cookies, or page content other than the
   Windows version text it translates.
-- It does not use analytics or third-party services.
+- It does not use analytics, advertising, or tracking services.
 - It does not sell or share any data.
+- Its only outbound request is to Microsoft's public release-health pages, and it sends no
+  data with it.
 
 ## Contact
 
-For questions about this policy, contact: **YOUR-EMAIL@YOUR-WEBSITE**
+For questions about this policy, contact: **help@liacoslabs.com**
 
 ## Changes
 

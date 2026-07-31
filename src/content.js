@@ -218,6 +218,8 @@
     if (!settings.enabled) return;
     observeRoot(document);
     scanAll();
+    // Re-scan when live build data arrives/updates (dispatched by versions.js).
+    document.addEventListener("wve:updated", queueScan);
     // Re-sweep periodically to catch shadow roots/iframes attached without a mutation we saw.
     setInterval(scanAll, 2000);
   }

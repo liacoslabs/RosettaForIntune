@@ -33,8 +33,22 @@ Rosetta:
   reports — and keeps up with the SPA as you navigate. It pierces the Shadow DOM and the
   same-origin iframes that the Azure "Ibiza" portal framework renders Intune's grids in.
 
-Everything runs locally. There are no accounts, analytics, trackers, or network calls; the
-version database is bundled in the extension.
+## Live, self-updating data
+
+A background service worker keeps the build/revision database current by fetching Microsoft's
+official Windows **release-health** pages, parsing them, and caching the result. New Windows
+builds and monthly patch revisions are recognized **without an extension update**.
+
+- Refreshes on install, on browser startup, once a day, and on demand (the popup's
+  **Refresh now** button).
+- The parsed live data is merged **over** a bundled snapshot, which stays as an always-available
+  offline fallback — so the extension still works if the fetch fails or before the first refresh.
+- Sources:
+  - Windows 11: <https://learn.microsoft.com/windows/release-health/windows11-release-information>
+  - Windows 10: <https://learn.microsoft.com/windows/release-health/release-information>
+
+Only public release data is fetched — no accounts, analytics, or trackers, and no personal or
+browsing data is ever sent or collected.
 
 ## Screenshots
 
@@ -81,26 +95,36 @@ Changes reload the active tab so the page re-renders with the new setting.
 ## Repository structure
 
 ```
-manifest.json          MV3 manifest (Intune / Azure portal origins)
-src/versions.js        Build & revision database + lookup helpers
+manifest.json          MV3 manifest (Intune / Azure portal origins, learn.microsoft.com host)
+src/background.js      Service worker — fetches & parses Microsoft release-health, caches live data
+src/versions.js        Bundled build/revision fallback + lookup (merges live data over it)
 src/content.js         DOM scanner + rewriter (Shadow DOM & iframe aware)
 src/content.css        Badge styling (light + dark)
-popup/                 Toolbar popup (settings + live preview)
+popup/                 Toolbar popup (settings, live-data status + Refresh now)
 icons/                 Extension icons
 store/                 Chrome Web Store submission materials (listing copy, privacy, imagery)
 ```
 
+## Permissions
+
+| Permission | Why |
+| --- | --- |
+| `storage` | Save display preferences and cache the live build database. |
+| `alarms` | Schedule the once-daily background refresh. |
+| host: `learn.microsoft.com` | Fetch Microsoft's public Windows release-health pages to refresh the data. |
+| host: Intune / Azure portal origins | Read and rewrite the visible OS build-number text. |
+
 ## Keeping the data current
 
-- **`WVE_BUILDS`** in [`src/versions.js`](src/versions.js) rarely changes — add a row when a
-  new Windows feature update ships (a new build number).
-- **`WVE_REVISION_DATES`** provides exact patch-month precision. Refresh it periodically from
-  Microsoft's release-health pages if you want the latest revisions recognized:
-  - Windows 11: <https://learn.microsoft.com/windows/release-health/windows11-release-information>
-  - Windows 10: <https://learn.microsoft.com/windows/release-health/release-information>
+Currency is automatic — the background worker refreshes from Microsoft daily (see
+[Live, self-updating data](#live-self-updating-data)). The bundled maps in
+[`src/versions.js`](src/versions.js) (`WVE_BUILDS` / `WVE_REVISION_DATES`) exist only as the
+**offline fallback**; you generally never need to touch them. If you want to raise the offline
+floor (e.g. for an air-gapped environment that can't reach `learn.microsoft.com`), add rows
+there from Microsoft's release-health pages.
 
-  Devices on an unlisted revision still get the correct feature-update label (e.g. `10-22H2`);
-  only the trailing patch month is omitted.
+Devices on a revision unknown to both live and bundled data still get the correct feature-update
+label (e.g. `10-22H2`); only the trailing patch month is omitted.
 
 ## Notes
 

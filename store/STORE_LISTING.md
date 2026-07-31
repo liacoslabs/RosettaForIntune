@@ -54,15 +54,20 @@ WHERE IT WORKS
 FEATURES
  • Automatic — translates as you browse; keeps up with the portal's dynamic tables
    and virtualized grids.
+ • Always current — the build database refreshes automatically from Microsoft's public
+   Windows release-health pages, so new builds and patch months are recognized without
+   an extension update. (A bundled snapshot works offline as a fallback.)
  • Compact — designed so the OS version column never needs widening.
  • Configurable — toolbar popup lets you toggle the overlay, show/hide the original
-   build number, and show/hide the patch month.
+   build number, show/hide the patch month, and refresh the data on demand.
  • Covers Windows 11 (21H2–26H1) and Windows 10 (1507–22H2), plus Windows Server 2022.
 
 PRIVACY
- • No data collection. No tracking. No external network calls.
- • The build database is bundled in the extension; all translation happens locally.
- • The only stored data is your display preferences (via Chrome sync storage).
+ • No data collection. No tracking. No analytics.
+ • Translation happens locally on your device.
+ • The only outbound request is to Microsoft's public release-health pages, to refresh the
+   build database — no personal or browsing data is ever sent.
+ • Stored data stays on your device: your display preferences and the cached build database.
 
 Rosetta for Intune is an independent tool and is not affiliated with, endorsed by,
 or sponsored by Microsoft. "Windows", "Intune", and "Microsoft" are trademarks of
@@ -81,9 +86,23 @@ shown in the Microsoft Intune admin center into human-readable version labels.
 
 **storage**
 ```
-Used only to save the user's display preferences (overlay on/off, show original
-build number, show patch month) so they persist across sessions. No browsing or
-personal data is stored.
+Saves the user's display preferences (overlay on/off, show original build number, show
+patch month) and caches the parsed Windows build database locally so the overlay works
+quickly and offline. No browsing or personal data is stored.
+```
+
+**alarms**
+```
+Schedules a once-daily background refresh of the Windows build database from Microsoft's
+public release-health pages, so translations stay current without an extension update.
+```
+
+**host permission: learn.microsoft.com**
+```
+The background service worker fetches Microsoft's public Windows release-health pages
+(learn.microsoft.com) and parses the build/version tables to keep the translation database
+current. These are anonymous requests for public web pages — no user data is sent, and only
+data (never remote code) is fetched and used.
 ```
 
 **Host permissions** (`intune.microsoft.com`, `endpoint.microsoft.com`,
@@ -95,7 +114,8 @@ admin center pages. Intune is built on the Azure "Ibiza" framework and renders i
 device grids inside iframes served from these Microsoft-owned origins, so the content
 script must run on them to locate and translate the version strings. The extension
 does not read credentials, form data, or any content other than the version text it
-rewrites, and it makes no network requests.
+rewrites. Its only network request is to Microsoft's public release-health pages (see
+the learn.microsoft.com justification above) to refresh the build database.
 ```
 
 ## Data usage disclosures (Privacy practices tab)

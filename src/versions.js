@@ -113,39 +113,97 @@ function wveFormatMonthYear(iso) {
   return `${WVE_MONTHS[parseInt(m[2], 10) - 1]} ${m[1]}`;
 }
 
+/*
+ * Live data, fetched from Microsoft's release-health pages by the background worker
+ * and cached in chrome.storage.local. It is merged OVER the bundled maps above — live
+ * wins, bundled is the always-available offline floor. Empty until the first load.
+ */
+let WVE_LIVE = { builds: {}, revisions: {}, ga: {}, fetchedAt: null };
+
 /**
- * Translate a raw version string into structured info.
+ * Translate a raw version string into structured info, preferring live data and
+ * falling back to the bundled database.
  * Accepts "10.0.26200.8875" or "26200.8875" (or a bare known build "26200").
- * Returns null when the build is unknown.
+ * Returns null when the build is unknown to both sources.
  */
 function wveLookup(raw) {
   if (!raw) return null;
-  let m = /(?:^|[^\d.])(?:10\.0\.)?(\d{4,5})(?:\.(\d{1,5}))?/.exec(raw);
-  // Prefer a strict full/short parse:
-  m = /^(?:10\.0\.)?(\d{4,5})(?:\.(\d{1,5}))?$/.exec(raw.trim());
+  const m = /^(?:10\.0\.)?(\d{4,5})(?:\.(\d{1,5}))?$/.exec(String(raw).trim());
   if (!m) return null;
 
   const build = parseInt(m[1], 10);
   const revision = m[2] !== undefined ? parseInt(m[2], 10) : null;
-  const info = WVE_BUILDS[build];
-  if (!info) return null;
+
+  const bundled = WVE_BUILDS[build];
+  const live = WVE_LIVE.builds[String(build)];
+
+  // Resolve edition/version: prefer a live entry that names a version, else bundled.
+  let product = null, version = null;
+  if (live && live.version) { product = live.product; version = live.version; }
+  else if (bundled) { product = bundled.product; version = bundled.version; }
+  if (!version) return null; // unknown to both sources
+
+  const name = bundled ? bundled.name : ""; // feature-update name only exists in bundled data
 
   const key = revision !== null ? `${build}.${revision}` : null;
-  const patchMonth = key && WVE_REVISION_DATES[key] ? WVE_REVISION_DATES[key] : null;
+  const patchMonth = key ? (WVE_LIVE.revisions[key] || WVE_REVISION_DATES[key] || null) : null;
+
+  const gaISO = (WVE_LIVE.ga && WVE_LIVE.ga[String(build)]) || (bundled && bundled.ga) || null;
 
   return {
     build,
     revision,
-    product: info.product,          // "Windows 11"
-    version: info.version,           // "25H2"
-    name: info.name,                 // "2025 Update"
-    gaISO: info.ga,                  // "2025-09-30"
-    gaMonthYear: wveFormatMonthYear(info.ga),   // "Sep 2025"
-    patchMonthYear: wveFormatMonthYear(patchMonth), // "Jul 2026" or ""
+    product,                                        // "Windows 11"
+    version,                                         // "25H2"
+    name,                                            // "2025 Update" (bundled only)
+    gaISO,                                           // "2025-09-30"
+    gaMonthYear: wveFormatMonthYear(gaISO),          // "Sep 2025"
+    patchMonthYear: wveFormatMonthYear(patchMonth),  // "Jul 2026" or ""
+    live: !!(live && live.version),                  // resolved from live data?
   };
+}
+
+/** Merge a live-data record (from storage / the worker) and notify listeners. */
+function wveApplyLive(rec) {
+  if (!rec || typeof rec !== "object") return;
+  WVE_LIVE = {
+    builds: rec.builds || {},
+    revisions: rec.revisions || {},
+    ga: rec.ga || {},
+    fetchedAt: rec.fetchedAt || null,
+  };
+  if (typeof document !== "undefined" && typeof CustomEvent !== "undefined" && document.dispatchEvent) {
+    document.dispatchEvent(new CustomEvent("wve:updated"));
+  }
 }
 
 // Expose for the content script (shared isolated world) and popup.
 if (typeof window !== "undefined") {
-  window.WVE = { lookup: wveLookup, formatMonthYear: wveFormatMonthYear, BUILDS: WVE_BUILDS };
+  window.WVE = {
+    lookup: wveLookup,
+    formatMonthYear: wveFormatMonthYear,
+    BUILDS: WVE_BUILDS,
+    applyLive: wveApplyLive,
+    getLive: () => WVE_LIVE,
+  };
+
+  // Load cached live data and stay in sync with background refreshes.
+  if (typeof chrome !== "undefined" && chrome.storage && chrome.storage.local) {
+    chrome.storage.local.get("wveLive", (res) => {
+      if (!chrome.runtime.lastError && res && res.wveLive) wveApplyLive(res.wveLive);
+    });
+    if (chrome.storage.onChanged) {
+      chrome.storage.onChanged.addListener((changes, area) => {
+        if (area === "local" && changes.wveLive && changes.wveLive.newValue) {
+          wveApplyLive(changes.wveLive.newValue);
+        }
+      });
+    }
+    // Nudge the worker to refresh if the cache is stale (fire-and-forget).
+    if (chrome.runtime && chrome.runtime.sendMessage) {
+      try {
+        chrome.runtime.sendMessage({ type: "wve:ensureFresh" }, () => void chrome.runtime.lastError);
+      } catch (e) { /* worker not available */ }
+    }
+  }
 }
